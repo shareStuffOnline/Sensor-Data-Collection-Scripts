@@ -1,0 +1,61 @@
+import serial
+import time
+from datetime import datetime
+
+def main():
+    try:
+        # Set up serial connection
+        # Replace '/dev/ttyACM0' with your actual serial port
+        s = serial.Serial(port="/dev/ttyACM0", parity=serial.PARITY_EVEN, stopbits=serial.STOPBITS_ONE, timeout=1)
+        s.flush()
+
+        while True:
+            # Get the current time
+            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+            # Send the current time to the serial port
+            s.write((current_time + "\r").encode())
+            print("Sent:", current_time)
+
+            # Wait for 5 seconds
+            time.sleep(5)
+
+    except serial.SerialException as e:
+        print("Error:", e)
+    finally:
+        # Ensure the serial connection is closed on exit
+        s.close()
+
+if __name__ == "__main__":
+    main()
+
+##
+import select
+import sys
+import time
+
+# Set up the poll object
+poll_obj = select.poll()
+poll_obj.register(sys.stdin, select.POLLIN)
+
+buffer = ""  # Buffer to store incomplete data
+
+# Loop indefinitely
+while True:
+    # Wait for input on stdin
+    poll_results = poll_obj.poll(1)  # the '1' is how long it will wait for message before looping again (in microseconds)
+    if poll_results:
+        # Read the data from stdin (read data coming from PC)
+        data = sys.stdin.read(1)  # Read one character at a time
+        if data == '\n':
+            # Entire line received, process it
+            sys.stdout.write("received data: " + buffer + "\r\n")
+            buffer = ""  # Clear the buffer for the next message
+        else:
+            # Add the character to the buffer
+            buffer += data
+    else:
+        # do something if no message received (like feed a watchdog timer)
+        continue
+
+

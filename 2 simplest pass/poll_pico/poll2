@@ -1,0 +1,70 @@
+import select
+import sys
+import time
+import machine
+
+
+led = machine.Pin(15, machine.Pin.OUT)
+# Set up the poll object
+poll_obj = select.poll()
+poll_obj.register(sys.stdin, select.POLLIN)
+
+buffer = ""  # Buffer to store incomplete data
+
+# Loop indefinitely
+while True:
+    # Wait for input on stdin
+    poll_results = poll_obj.poll(1)  # the '1' is how long it will wait for message before looping again (in microseconds)
+    if poll_results:
+        # Read the data from stdin (read data coming from PC)
+        data = sys.stdin.read(1)  # Read one character at a time
+        if data == '\n':
+            # Entire line received, process it
+            sys.stdout.write("received data: " + buffer + "\r\n")
+            if (buffer=='1'):
+                led.on()
+            else:
+                led.off()
+            buffer = ""  # Clear the buffer for the next message
+            
+        else:
+            # Add the character to the buffer
+            buffer += data
+    else:
+        # do something if no message received (like feed a watchdog timer)
+        continue
+
+
+import serial
+import time
+
+def main():
+    try:
+        # Set up serial connection
+        # Replace '/dev/ttyACM0' with your actual serial port
+        s = serial.Serial(port="/dev/ttyACM0", parity=serial.PARITY_EVEN, stopbits=serial.STOPBITS_ONE, timeout=1)
+        s.flush()
+
+        led_state = 0  # Initialize state variable
+
+        while True:
+            # Send "0" or "1" to the serial port
+            s.write(f"{led_state}\r".encode())
+            print(f"Sent: {led_state}")
+
+            # Alternate the state between 0 and 1
+            led_state = 1 - led_state
+
+            # Wait for 5 seconds
+            time.sleep(5)
+
+    except serial.SerialException as e:
+        print("Error:", e)
+    finally:
+        # Ensure the serial connection is closed on exit
+        s.close()
+
+if __name__ == "__main__":
+    main()
+
+

@@ -1,0 +1,25 @@
+
+import sys
+import machine
+import time
+
+led = machine.Pin(15, machine.Pin.OUT)
+
+def flash_led(times, delay):
+    for _ in range(times):
+        led.on()
+        time.sleep(delay)
+        led.off()
+        time.sleep(delay)
+
+while True:
+    line = sys.stdin.readline()  # Read a whole line
+    if line:
+        command = line.strip()  # Remove any trailing newline or whitespace
+        if command == 'on':
+            led.on()
+        elif command == 'off':
+            led.off()
+        elif command == 'flash':
+            flash_led(5, 0.5)  # Flash 5 times with a half-second delay
+

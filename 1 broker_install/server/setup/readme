@@ -1,0 +1,37 @@
+#current readme server setup
+
+
+sudo ./python3-installs.sh
+
+obvioulsy you can use a real email but i don't want you to see my real email
+so we are going with temp-mail.org https://temp-mail.org/en/
+weximef326@vasteron.com   Password!
+
+
+python ./configure_zerotier_install.py
+
+sudo ./install_configured_zerotier_server.sh	#use zerotier_keys to join network
+sudo ./install_broker.sh			#install message broker
+
+
+#while here configure the range to be 172.16.0.0/12 to 172.31.255.255
+
+
+
+sudo apt-get install -y mosquitto-clients
+
+# test in two terminals, no external data needed
+mosquitto_sub -h 172.17.17.17 -t "#"
+mosquitto_pub -h 172.17.17.17 -t "test" -m "Test message"
+
+
+### these will work only after the server has something sending data to these topics
+mosquitto_sub -h 172.17.17.17 -t "loc2/Pressure"
+mosquitto_sub -h 172.17.17.17 -t "loc2/Humidity"
+mosquitto_sub -h 172.17.17.17 -t "loc2/+"
+mosquitto_sub -h 172.17.17.17 -t "#/Humidity"
+mosquitto_sub -h 191.101.14.170 -t "test_chan"
+
+sudo apt-get install -y mosquitto-clients
+
+

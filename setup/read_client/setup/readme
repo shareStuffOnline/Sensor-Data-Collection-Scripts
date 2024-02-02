@@ -1,0 +1,5 @@
+sudo ./python3-installs.sh
+python configure_zerotier_install.py
+sudo ./zerotier_client_install.sh
+
+sudo ./install_thonny.sh

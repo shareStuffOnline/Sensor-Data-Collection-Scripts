@@ -1,0 +1,28 @@
+#current readme server setup
+
+
+
+
+sudo ./python3-installs.sh
+
+ you can use a real email but i don't want you to see my real email
+so we are going with temp-mail.org https://temp-mail.org/en/
+weximef326@vasteron.com   Password!
+oh, no....my api keys...how could you break my example....that i litterally gave you the password for. maybe don't use this one in production, yeah?
+
+
+python ./configure_zerotier_install.py
+
+sudo ./install_configured_zerotier_server.sh	#use zerotier_keys to join network
+sudo ./install_broker.sh			#install message broker
+
+
+#while here configure the range to be 172.16.0.0/12 to 172.31.255.255
+
+
+
+test in two terminals
+mosquitto_sub -h 172.17.17.17 -t "#"
+mosquitto_pub -h 172.17.17.17 -t test -m "Test message"
+
+
